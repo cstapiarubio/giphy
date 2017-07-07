@@ -1,23 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>Giphy</title>
-	<!-- fonts google-->
-	<link href="https://fonts.googleapis.com/css?family=Artifika|Open+Sans" rel="stylesheet">
-	<!--iconos (fonts awesome)-->
-	<script src="https://use.fontawesome.com/2c0c95ddaa.js"></script>
-	<!-- CDN bootstrap css-->
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+$(document).ready(function(){
+	var dibujarGifs = function (data){
+		var gif="";
+		var url="";
+		data.forEach(function(element){
+			gif =element.images.downsized_large.url;
+			url=element.bitly_gif_url;
+			$("elementos").append(armarTemplate(gif , url));
+		});
+	}
 
-	<!-- CSS-->
-	<link rel="stylesheet" type="text/css" href="assets/css/main.css">
-	
-</head>
+	var armarTemplate = function(gif,url){
+		var t = "<div class='elemento'><img src='" + gif + "'/><a href='"+ url + "'>Ver más</a></div"
+		return t;
+	}
 
-<body>
+	var ajaxGif = function(gif){
+		$.ajax({
+			url: 'http://api.giphy.com/v1/gifs/search',
+			type: 'GET',
+			datatype:'json',
+			data : {
+				q : gif,
+				api_key :'dc6zaTOxFJmzC'
+			}
+		})
+		.done(function(response){
+			console.log(response);
+			dibujarGifs(response.data);
+		})
+		.fail(function(){
+			console.log("error");
+		});
+	}
 
-</body>
-
-</html>
+	$("#buscar-gif").click(function(event){
+		console.log("Entro");
+		$("elementos").empty();
+		var gif = $("#gif-text").val();
+		ajaxGif(gif);
+	});
+});
 
